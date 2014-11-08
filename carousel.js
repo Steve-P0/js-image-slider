@@ -12,52 +12,28 @@ jQuery.fn.extend({
             var items = $(carousel).find('li');
             var $navs = $('<div class="' + settings.namespace + '__nav ' + settings.namespace + '__nav--left"></div><div class="' + settings.namespace + '__nav ' + settings.namespace + '__nav--right"></div>');
 
-            // var shake = function(element, direction){
-            //     var direction = direction == undefined? "left" : direction;
-            //     if (direction == "right"){
-            //         $(element).stop(false,true)
-            //             .animate(
-            //                 {"left": "-=50"},
-            //                 {
-            //                     duration: "normal",
-            //                     complete: function(){
-            //                         $(this).stop(false,true).animate({"left":"+=50"},"fast");
-            //                     }
-            //                 }
-            //             )
-            //         return;
-            //     }
-            //     if (direction == "left"){
-            //         $(element).stop(false,true)
-            //             .animate(
-            //                 {"left": "+=50"},
-            //                 {
-            //                     duration: "normal",
-            //                     complete: function(){
-            //                         $(this).stop(false,true).animate({"left":"-=50"},"fast");
-            //                     }
-            //                 }
-            //             )
-            //         return;
-            //     }
-                // if (direction == "left"){
-                //     $(element).stop(false,true).animate({"left": "+=50"}, "normal").animate({"left": "-=50"}, "fast");
-                //     return true;
-                // }
-            // }
+            var shake = function(element, direction){
+                var direction = direction == undefined? "left" : direction;
+                if (direction == "right"){
+                    $(element).stop(false,true).animate({"left": "-=50"}, "normal").stop(false,true).animate({"left": "+=50"}, "fast");
+                    return true;
+                }
+
+                if (direction == "left"){
+                    $(element).stop(false,true).animate({"left": "+=50"}, "normal").stop(false,true).animate({"left": "-=50"}, "fast");
+                    return true;
+                }
+            }
             //add and configure navs element
             $(carousel).append($navs);
 
             $('.'+settings.namespace + "__nav--right").click(function(event) {
                 var next_active_index = ($(".carousel__item--active").index('.carousel__item') + 1);
-                console.log(event);
                 //if index out of range just shake parent container
                 if (next_active_index > items.length-1){
-                    // shake($(carousel).find('ul'),"right");
-                    // console.log("more than length: "+next_active_index);
+                    shake($(carousel).find('ul'),"right");
                     return;
                 }
-                    // console.log("in length: "+next_active_index);
 
                 $('.'+settings.namespace + "__item").trigger('CarouselScrollRight');
 
@@ -69,7 +45,7 @@ jQuery.fn.extend({
                 var next_active_index = ($(".carousel__item--active").index('.carousel__item') - 1);
                 //if index out of range just shake parent container
                 if (next_active_index < 0){
-                    // shake($(carousel).find('ul'));
+                    shake($(carousel).find('ul'));
                     return;
                 }
 
@@ -95,21 +71,30 @@ jQuery.fn.extend({
                         "left": picture_shift+"%"
                     });
                 picture_shift += picture_size+1;
+            });
 
-
-                //add events to slide right & left
-                $(item)
+            //add events to slide right & left
+            $(items[0])
                     .bind('CarouselScrollRight', function(event) {
                     var element_shift = parseInt(this.style.left);
                     var shift_length = settings.sizes[$(".carousel__item--active").data("size")]+1;
-                    $(this).animate({"left": (element_shift - shift_length)+"%"}, "fast")
+                    $('.carousel__item').stop(false,true)
+                        .animate(
+                            {"left": "-="+shift_length+"%"},
+                            {
+                                duration:"fast",
+                            });
                     })
                     .bind('CarouselScrollLeft', function(event) {
                     var element_shift = parseInt(this.style.left);
                     var shift_length = settings.sizes[$(".carousel__item--active").data("size")]+1;
-                    $(this).stop().animate({"left": (element_shift + shift_length)+"%"}, {duration:"fast", complete: function(){ $('window').stop(false,true)}})
-                });
-            });
+                    $('.carousel__item').stop(false,true)
+                        .animate(
+                            {"left": "+="+shift_length+"%"},
+                            {
+                                duration:"fast",
+                            });
+                    });
 
         });
     }

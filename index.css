@@ -16,12 +16,14 @@
     width: 100%;
     margin: 0;
     padding: 0;
+    background-color: #fff;
 }
 
 .carousel__item{
     position: absolute;
     display: block;
     height: 300px;
+    background-color: #eeeeee;
 }
 .carousel__item>img{
     height: auto;

@@ -10,7 +10,11 @@ jQuery.fn.extend({
         return this.each(function(){
             var carousel = $(this)[0];
             var items = $(carousel).find('li');
-            var $navs = $('<div class="' + settings.namespace + '__nav ' + settings.namespace + '__nav--left"></div><div class="' + settings.namespace + '__nav ' + settings.namespace + '__nav--right"></div>');
+            var $navs = $('<div class="' + settings.namespace + '__nav-wrapper" >' +'<div class="' + settings.namespace + '__nav ' + settings.namespace + '__nav--left"></div><div class="' + settings.namespace + '__nav ' + settings.namespace + '__nav--right"></div></div>');
+
+            //remove Selection of element
+            carousel.onmousedown = function() { return false };
+            carousel.onselectstart = function(){ return false };
 
             var shake = function(element, direction){
                 var direction = direction == undefined? "left" : direction;
@@ -29,6 +33,7 @@ jQuery.fn.extend({
 
             $('.'+settings.namespace + "__nav--right").click(function(event) {
                 var next_active_index = ($(".carousel__item--active").index('.carousel__item') + 1);
+
                 //if index out of range just shake parent container
                 if (next_active_index > items.length-1){
                     shake($(carousel).find('ul'),"right");
@@ -59,6 +64,7 @@ jQuery.fn.extend({
             //add to first & last elements class respectively
             items.eq(0).addClass(settings.namespace+'__item--first').addClass(settings.namespace+'__item--active');
             items.eq(items.length-1).addClass(settings.namespace+'__item--last');
+            $(".carousel__item--last").attr("data-size","3");
 
             var picture_shift = 0;
             $.each(items, function(index, val) {
